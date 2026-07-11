@@ -1,0 +1,80 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProblemList from "./pages/ProblemList";
+import ProblemDetail from "./pages/ProblemDetail";
+import Leaderboard from "./pages/Leaderboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./pages/Dashboard";
+import SubmissionHistory from "./pages/SubmissionHistory";
+import SubmissionDetail from "./pages/SubmissionDetail";
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/problems"
+            element={
+              <ProtectedRoute>
+                <ProblemList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/problems/:slug"
+            element={
+              <ProtectedRoute>
+                <ProblemDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
+              </ProtectedRoute>
+            }
+          />
+
+                    <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+              path="/submissions"
+              element={
+                <ProtectedRoute>
+                  <SubmissionHistory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/submissions/:id"
+              element={
+                <ProtectedRoute>
+                  <SubmissionDetail />
+                </ProtectedRoute>
+              }
+            />
+                      
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+export default App;

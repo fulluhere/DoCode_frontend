@@ -59,6 +59,11 @@ export default function Login() {
               className="w-full px-4 py-3 bg-zinc-800 text-white border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
               placeholder="Enter your password"
             />
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-sm text-indigo-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
           {error && (

@@ -12,6 +12,21 @@ const LANGUAGE_DEFAULTS = {
   javascript: `// your code here\n`,
 };
 
+const difficultyColor = {
+  Easy: "text-green-700 bg-green-100",
+  Medium: "text-yellow-700 bg-yellow-100",
+  Hard: "text-red-700 bg-red-100",
+};
+
+const verdictColor = {
+  AC: "text-green-700 bg-green-100 border-green-200",
+  WA: "text-red-700 bg-red-100 border-red-200",
+  TLE: "text-orange-700 bg-orange-100 border-orange-200",
+  RE: "text-red-700 bg-red-100 border-red-200",
+  CE: "text-gray-700 bg-gray-200 border-gray-300",
+  ERROR: "text-red-700 bg-red-100 border-red-200",
+};
+
 export default function ProblemDetail() {
   const { slug } = useParams();
   const [problem, setProblem] = useState(null);
@@ -32,7 +47,7 @@ export default function ProblemDetail() {
   }, [slug]);
 
   useEffect(() => {
-    return () => clearInterval(pollRef.current); // cleanup on unmount
+    return () => clearInterval(pollRef.current);
   }, []);
 
   const handleLanguageChange = (lang) => {
@@ -55,7 +70,7 @@ export default function ProblemDetail() {
         setSubmitting(false);
         setResult({ verdict: "ERROR", errorMessage: "Failed to fetch result" });
       }
-    }, 1500); // poll every 1.5s
+    }, 1500);
   };
 
   const handleSubmit = async () => {
@@ -70,56 +85,97 @@ export default function ProblemDetail() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className="text-center mt-16 text-lg text-gray-500">Loading...</p>;
+  if (error) return <p className="text-center mt-16 text-lg text-red-600">{error}</p>;
   if (!problem) return null;
 
   return (
-    <div style={{ display: "flex", gap: 20, padding: 20 }}>
-      <div style={{ flex: 1 }}>
-        <h2>{problem.title}</h2>
-        <p><strong>Difficulty:</strong> {problem.difficulty}</p>
-        <p><strong>Tags:</strong> {problem.tags?.join(", ")}</p>
-        <p style={{ whiteSpace: "pre-wrap" }}>{problem.description}</p>
-        <p><strong>Constraints:</strong> {problem.constraints}</p>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 max-w-7xl mx-auto">
+      {/* Left panel — problem description */}
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-8 h-fit">
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-3xl font-extrabold text-gray-900">{problem.title}</h2>
+          <span className={`text-sm font-bold px-3 py-1 rounded-full ${difficultyColor[problem.difficulty] || ""}`}>
+            {problem.difficulty}
+          </span>
+        </div>
 
-        <h3>Sample Test Cases</h3>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {problem.tags?.map((tag) => (
+            <span key={tag} className="text-sm font-medium px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">{problem.description}</p>
+
+        <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+          <h4 className="text-sm font-bold text-gray-600 uppercase tracking-wide mb-1">Constraints</h4>
+          <p className="text-sm text-gray-700 font-mono">{problem.constraints}</p>
+        </div>
+
+        <h3 className="text-lg font-bold text-gray-900 mb-3">Sample Test Cases</h3>
         {problem.testCases?.map((tc, i) => (
-          <div key={i} style={{ marginBottom: 10, padding: 10, background: "#f5f5f5" }}>
-            <p><strong>Input:</strong></p>
-            <pre>{tc.input}</pre>
-            <p><strong>Expected Output:</strong></p>
-            <pre>{tc.expectedOutput}</pre>
+          <div key={i} className="mb-4 p-4 bg-gray-900 rounded-xl">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Input</p>
+            <pre className="text-sm text-gray-100 mb-3 whitespace-pre-wrap">{tc.input}</pre>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Expected Output</p>
+            <pre className="text-sm text-green-400 whitespace-pre-wrap">{tc.expectedOutput}</pre>
           </div>
         ))}
       </div>
 
-      <div style={{ flex: 1 }}>
-        <select value={language} onChange={(e) => handleLanguageChange(e.target.value)}>
-          <option value="cpp">C++</option>
-          <option value="python">Python</option>
-          <option value="java">Java</option>
-          <option value="javascript">JavaScript</option>
-        </select>
+      {/* Right panel — editor + submission */}
+      <div className="flex flex-col">
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50">
+            <select
+              value={language}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              className="text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="cpp">C++</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="javascript">JavaScript</option>
+            </select>
+          </div>
 
-        <Editor
-          height="400px"
-          language={language === "cpp" ? "cpp" : language}
-          value={code}
-          onChange={(value) => setCode(value)}
-          theme="vs-dark"
-        />
+          <Editor
+            height="420px"
+            language={language === "cpp" ? "cpp" : language}
+            value={code}
+            onChange={(value) => setCode(value)}
+            theme="vs-dark"
+            options={{ fontSize: 14, minimap: { enabled: false }, padding: { top: 16 } }}
+          />
 
-        <button onClick={handleSubmit} disabled={submitting} style={{ marginTop: 10 }}>
-          {submitting ? "Judging..." : "Submit"}
-        </button>
+          <div className="px-5 py-4 border-t border-gray-100">
+            <button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="w-full py-3 text-base font-bold bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              {submitting ? "Judging..." : "Submit"}
+            </button>
+          </div>
+        </div>
 
         {result && (
-          <div style={{ marginTop: 15, padding: 10, background: "#f0f0f0" }}>
-            <p><strong>Verdict:</strong> {result.verdict}</p>
-            {result.runtime !== undefined && <p><strong>Runtime:</strong> {result.runtime}ms</p>}
-            {result.errorMessage && <pre style={{ color: "red" }}>{result.errorMessage}</pre>}
-            {result.output && <pre>{result.output}</pre>}
+          <div className={`mt-6 p-6 rounded-2xl border-2 ${verdictColor[result.verdict] || "border-gray-200 bg-gray-50"}`}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-2xl font-extrabold">{result.verdict}</span>
+              {result.runtime !== undefined && (
+                <span className="text-sm font-semibold text-gray-600">{result.runtime}ms</span>
+              )}
+            </div>
+            {result.errorMessage && (
+              <pre className="text-sm bg-white/60 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">{result.errorMessage}</pre>
+            )}
+            {result.output && (
+              <pre className="text-sm bg-white/60 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap mt-2">{result.output}</pre>
+            )}
           </div>
         )}
       </div>

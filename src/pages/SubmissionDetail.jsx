@@ -1,7 +1,15 @@
-// frontend/src/pages/SubmissionDetail.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getSubmission } from "../api/submissions";
+
+const verdictColor = {
+  AC: "text-green-700 bg-green-100",
+  WA: "text-red-700 bg-red-100",
+  TLE: "text-orange-700 bg-orange-100",
+  RE: "text-red-700 bg-red-100",
+  CE: "text-gray-700 bg-gray-200",
+  PENDING: "text-yellow-700 bg-yellow-100",
+};
 
 export default function SubmissionDetail() {
   const { id } = useParams();
@@ -16,25 +24,34 @@ export default function SubmissionDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className="text-center mt-16 text-lg text-gray-500">Loading...</p>;
+  if (error) return <p className="text-center mt-16 text-lg text-red-600">{error}</p>;
   if (!submission) return null;
 
   return (
-    <div style={{ maxWidth: 800, margin: "40px auto" }}>
-      <h2>Submission Detail</h2>
-      <p><strong>Verdict:</strong> {submission.verdict}</p>
-      <p><strong>Language:</strong> {submission.language}</p>
-      <p><strong>Runtime:</strong> {submission.runtime}ms</p>
-      <p><strong>Test Cases Passed:</strong> {submission.testCasesPassed} / {submission.testCasesTotal}</p>
+    <div className="max-w-4xl mx-auto px-6 py-12">
+      <h2 className="text-4xl font-extrabold text-gray-900 mb-8">Submission Detail</h2>
+
+      <div className="flex flex-wrap gap-3 mb-8">
+        <span className={`text-base font-bold px-4 py-2 rounded-full ${verdictColor[submission.verdict] || ""}`}>
+          {submission.verdict}
+        </span>
+        <span className="text-base text-gray-700 px-4 py-2 bg-gray-100 rounded-full capitalize font-medium">{submission.language}</span>
+        <span className="text-base text-gray-700 px-4 py-2 bg-gray-100 rounded-full font-medium">{submission.runtime}ms</span>
+        <span className="text-base text-gray-700 px-4 py-2 bg-gray-100 rounded-full font-medium">
+          {submission.testCasesPassed} / {submission.testCasesTotal} passed
+        </span>
+      </div>
+
       {submission.errorMessage && (
-        <div>
-          <strong>Error:</strong>
-          <pre style={{ color: "red", background: "#fee", padding: 10 }}>{submission.errorMessage}</pre>
+        <div className="mb-8">
+          <h3 className="text-lg font-bold text-gray-800 mb-3">Error</h3>
+          <pre className="text-red-700 bg-red-50 p-5 rounded-xl text-base overflow-x-auto">{submission.errorMessage}</pre>
         </div>
       )}
-      <h3>Code</h3>
-      <pre style={{ background: "#f5f5f5", padding: 15, overflowX: "auto" }}>{submission.code}</pre>
+
+      <h3 className="text-lg font-bold text-gray-800 mb-3">Code</h3>
+      <pre className="bg-gray-900 text-gray-100 p-5 rounded-xl text-base overflow-x-auto">{submission.code}</pre>
     </div>
   );
 }

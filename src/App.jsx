@@ -11,6 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import SubmissionHistory from "./pages/SubmissionHistory";
 import SubmissionDetail from "./pages/SubmissionDetail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -70,7 +72,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-                      
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />       
         </Routes>
       </BrowserRouter>
     </AuthProvider>

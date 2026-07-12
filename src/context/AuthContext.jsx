@@ -35,8 +35,18 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // frontend/src/context/AuthContext.jsx — add these two functions inside AuthProvider
+  const forgotPassword = async (email) => {
+    const res = await api.post("/auth/forgot-password", { email });
+    return res.data;
+  };
+
+  const resetPassword = async (email, otp, newPassword) => {
+    const res = await api.post("/auth/reset-password", { email, otp, newPassword });
+    return res.data;
+  };
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

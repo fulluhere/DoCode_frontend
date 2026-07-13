@@ -13,6 +13,9 @@ compilerApi.interceptors.request.use((config) => {
   return config;
 });
 
+export const runCode = (language, code, input = "") =>
+  compilerApi.post("/run", { language, code, input });
+
 export const createSubmission = (problemId, language, code) =>
   compilerApi.post("/submissions", { problemId, language, code });
 

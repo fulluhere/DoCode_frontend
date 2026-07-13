@@ -3,7 +3,9 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { getProblemBySlug } from "../api/problems";
-import { createSubmission, getSubmission } from "../api/submissions";
+import { createSubmission, getSubmission, runCode } from "../api/submissions";
+import AIHint from "../components/AIHint";
+import AIAnalysis from "../components/AIAnalysis";
 
 const LANGUAGE_DEFAULTS = {
   cpp: `#include<iostream>\nusing namespace std;\nint main(){\n    // your code here\n    return 0;\n}`,
@@ -37,6 +39,8 @@ export default function ProblemDetail() {
   const [code, setCode] = useState(LANGUAGE_DEFAULTS["python"]);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
+  const [running, setRunning] = useState(false);
+  const [runResult, setRunResult] = useState(null);
   const pollRef = useRef(null);
 
   useEffect(() => {
@@ -82,6 +86,20 @@ export default function ProblemDetail() {
     } catch (err) {
       setSubmitting(false);
       setResult({ verdict: "ERROR", errorMessage: err.response?.data?.message || "Submission failed" });
+    }
+  };
+
+  const handleRun = async () => {
+    setRunning(true);
+    setRunResult(null);
+    try {
+      const sampleInput = problem.testCases?.[0]?.input || "";
+      const res = await runCode(language, code, sampleInput);
+      setRunResult(res.data);
+    } catch (err) {
+      setRunResult({ verdict: "ERROR", errorMessage: err.response?.data?.error || "Run failed" });
+    } finally {
+      setRunning(false);
     }
   };
 
@@ -151,14 +169,39 @@ export default function ProblemDetail() {
             options={{ fontSize: 14, minimap: { enabled: false }, padding: { top: 16 } }}
           />
 
-          <div className="px-5 py-4 border-t border-gray-100">
+          <div className="px-5 py-4 border-t border-gray-100 flex gap-3">
+            <button
+              onClick={handleRun}
+              disabled={running || submitting}
+              className="flex-1 py-3 text-base font-bold bg-gray-700 text-white rounded-lg shadow-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              {running ? "Running..." : " Run"}
+            </button>
             <button
               onClick={handleSubmit}
-              disabled={submitting}
-              className="w-full py-3 text-base font-bold bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              disabled={submitting || running}
+              className="flex-1 py-3 text-base font-bold bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {submitting ? "Judging..." : "Submit"}
             </button>
+          </div>
+          {runResult && (
+            <div className="px-5 pb-5">
+              <div className="p-4 bg-gray-900 rounded-xl">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">
+                  {runResult.verdict === "ERROR" ? "Error" : "Output"}
+                </p>
+                <pre className="text-sm text-gray-100 whitespace-pre-wrap">
+                  {runResult.errorMessage || runResult.output}
+                </pre>
+                {runResult.runtime !== undefined && (
+                  <p className="text-xs text-gray-400 mt-2">{runResult.runtime}ms</p>
+                )}
+              </div>
+            </div>
+          )}
+          <div className="px-5 pb-5">
+            <AIHint problemId={problem._id} userCode={code} />
           </div>
         </div>
 
@@ -176,6 +219,7 @@ export default function ProblemDetail() {
             {result.output && (
               <pre className="text-sm bg-white/60 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap mt-2">{result.output}</pre>
             )}
+            <AIAnalysis submissionId={result._id} verdict={result.verdict} />
           </div>
         )}
       </div>

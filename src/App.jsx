@@ -13,6 +13,9 @@ import SubmissionHistory from "./pages/SubmissionHistory";
 import SubmissionDetail from "./pages/SubmissionDetail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AdminRoute from "./components/AdminRoute";
+import AdminCreateProblem from "./pages/AdminCreateProblems";
+
 
 function App() {
   return (
@@ -73,7 +76,15 @@ function App() {
               }
             />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />       
+                  <Route path="/reset-password" element={<ResetPassword />} />   
+                  <Route
+                  path="/admin/create-problem"
+                  element={
+                    <AdminRoute>
+                      <AdminCreateProblem />
+                    </AdminRoute>
+                  }
+                />    
         </Routes>
       </BrowserRouter>
     </AuthProvider>

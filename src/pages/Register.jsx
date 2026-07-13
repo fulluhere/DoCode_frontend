@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import logo from "../assets/logo.svg";
 export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -30,15 +30,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 bg-black">
-      <div className="w-full max-w-sm bg-zinc-900 border border-orange-500 rounded-2xl shadow-2xl p-8">
-        <h2 className="text-3xl font-bold text-orange-500 mb-6 text-center">
-          🐯 Create Your DoCode Account
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-sm -900 border border-indigo-500 rounded-2xl shadow-2xl p-8">
+        <h2 className="text-3xl font-bold text-indigo-500 mb-6 text-center">
+           <img src={logo} alt="DoCode logo" className="h-9 w-9" />
+        <span className="text-2xl font-extrabold text-indigo-600 tracking-tight">Create Your DoCode Account</span>   
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-orange-200 mb-2">
+            <label className="block text-sm font-medium text-indigo-600 mb-3">
               Username
             </label>
             <input
@@ -47,12 +48,12 @@ export default function Register() {
               onChange={(e) => setUsername(e.target.value)}
               required
               placeholder="Choose a username"
-              className="w-full px-4 py-3 bg-zinc-800 text-white border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+              className="w-full px-4 py-3 border border-indigo-400 rounded-lg focus: indigo-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-orange-200 mb-2">
+            <label className="block text-sm font-medium text-indigo-600 mb-3">
               Email
             </label>
             <input
@@ -61,12 +62,12 @@ export default function Register() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
-              className="w-full px-4 py-3 bg-zinc-800 text-white border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+              className="w-full px-4 py-3 border border-indigo-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-orange-200 mb-2">
+            <label className="block text-sm font-medium text-indigo-600 mb-2">
               Password
             </label>
             <input
@@ -75,7 +76,7 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
-              className="w-full px-4 py-3 bg-zinc-800 text-white border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+              className="w-full px-4 py-3 border border-indigo-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             />
           </div>
 
@@ -92,13 +93,13 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-orange-500 text-black font-bold rounded-lg hover:bg-orange-400 disabled:opacity-50 transition"
+            className="w-full py-3 bg-indigo-400 text-white font-bold rounded-lg hover:indigo-500 disabled:opacity-50 transition"
           >
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
-        <p className="text-sm text-orange-100 mt-6 text-center">
+        <p className="text-sm text-indigo-600 mt-6 text-center">
           Already have an account?{" "}
           <Link
             to="/login"

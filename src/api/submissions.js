@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const compilerApi = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://online-compiler-backend-zi63.onrender.com/api",
 });
 
 compilerApi.interceptors.request.use((config) => {
